@@ -23,16 +23,18 @@ model Pokemon {
 }
 
 model PokemonDetails {
-  id     Int     @id 
+  id     Int     @id
+  name   String 
+  sprites   Json
+  types     Json
   height Int
   weight Int
+  moves  Json
   order  Int
-  sprites   Json
-  moves     Json
+  species   String
   stats     Json
   abilities Json
-  
-  pokemon Pokemon @relation(fields: [id], references: [id], onDelete: Cascade)
+  form      String
 }
 
 model Team {
