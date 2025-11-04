@@ -37,5 +37,31 @@ export class PokemonService {
         ),
     );
     return limit ? filteredPokemons.slice(0, limit) : filteredPokemons;
-  }  
+  }
+
+  async getPokemonsPaginated(
+    sort?: 'name-asc' | 'name-desc' | 'id-asc' | 'id-desc',
+    limit?: number,
+    offset?: number,
+  ): Promise<Pokemon[]> {
+
+    const orderBy = sort
+      ? { [sort.split('-')[0]]: sort.split('-')[1] }
+      : undefined;
+
+    let take: number | undefined = undefined;
+    let skip: number | undefined = undefined;
+
+    if (limit) {
+      take = Number(limit);
+    }
+    if (offset) {
+      skip = Number(offset);
+    }
+    return await this.prisma.pokemon.findMany({
+      orderBy,
+      take,
+      skip,
+    });
+  }
 }

@@ -1,5 +1,6 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   Optional,
   Param,
@@ -29,5 +30,11 @@ export class PokemonController {
   @Get('/api/v1/search')
   async searchPokemons(@Query('query') query: string, @Query('limit') limit?: number): Promise<Pokemon[]> {
     return await this.pokemonService.searchPokemons(query, limit);
+  }
+
+  @Get('/api/v2/pokemons')
+  async getPokemonsPaginated(@Query('sort', ValidationPipe) sort?: 'name-asc' | 'name-desc' | 'id-asc' | 'id-desc',
+  @Query('limit') limit?: number, @Query('offset') offset?: number) {
+    return await this.pokemonService.getPokemonsPaginated(sort, limit, offset);
   }
 }
