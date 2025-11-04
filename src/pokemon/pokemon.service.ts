@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Pokemon } from 'generated/prisma/client.js';
 import { PrismaService } from '../prisma.service.js';
+import { PokemonType } from '../types/index.js';
 
 @Injectable()
 export class PokemonService {
@@ -26,7 +27,6 @@ export class PokemonService {
   }
 
   async searchPokemons(query: string, limit?: number): Promise<Pokemon[]> {
-    type PokemonType = { slot: number; type: { name: string } };
 
     const pokemons = await this.prisma.pokemon.findMany();
     const filteredPokemons = pokemons.filter(
