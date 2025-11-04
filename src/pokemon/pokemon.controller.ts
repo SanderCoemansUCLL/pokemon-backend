@@ -6,8 +6,8 @@ import {
   Query,
   ValidationPipe,
 } from '@nestjs/common';
-import { PokemonService } from '../pokemon/pokemon.service';
-import { Pokemon } from 'generated/prisma/client';
+import { PokemonService } from '../pokemon/pokemon.service.js';
+import { Pokemon } from '../../generated/prisma/client.js';
 
 @Controller()
 export class PokemonController {

@@ -1,11 +1,13 @@
 import {
+    Body,
   Controller,
   Get,
   Param,
   ParseIntPipe,
+  Post,
 } from '@nestjs/common';
-import { TeamService } from '../team/team.service';
-import { Team } from 'generated/prisma/client';
+import { TeamService } from '../team/team.service.js';
+import { Team, Prisma } from '../../generated/prisma/client.js';
 
 @Controller()
 export class TeamController {
@@ -19,5 +21,10 @@ export class TeamController {
   @Get('/api/v1/teams/:id')
   async getTeamById(@Param('id', ParseIntPipe) id: number) {
     return await this.teamService.getTeamById(id);
+  }
+
+  @Post('/api/v1/teams')
+  async createTeam(@Body() teamData: Prisma.TeamCreateInput): Promise<Team> {
+    return await this.teamService.createTeam(teamData);
   }
 }

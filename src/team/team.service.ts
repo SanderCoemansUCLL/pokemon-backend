@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Team } from 'generated/prisma/client';
-import { PrismaService } from 'src/prisma.service';
+import { Team, Prisma } from 'generated/prisma/client.js';
+import { PrismaService } from '../prisma.service.js';
 
 @Injectable()
 export class TeamService {
@@ -13,6 +13,25 @@ export class TeamService {
   async getTeamById(id: number): Promise<Team | null> {
     return await this.prisma.team.findUnique({
       where: { id: id }
+    });
+  }
+
+  async createTeam(teamData: Prisma.TeamCreateInput): Promise<Team> {
+    
+    let pokemonCount = 0;
+    const connect = teamData.pokemons?.connect;
+    if (Array.isArray(connect)) {
+      pokemonCount = connect.length;
+    } else if (connect) {
+      pokemonCount = 1;
+    }
+
+    if (pokemonCount > 6) {
+      throw new Error('A team cannot have more than 6 Pokémons.');
+    }
+    return await this.prisma.team.create({
+      data: teamData,
+      include: { pokemons: true },
     });
   }
 }
