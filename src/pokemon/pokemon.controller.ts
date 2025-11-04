@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Optional,
   Param,
   ParseIntPipe,
   Query,
@@ -23,5 +24,10 @@ export class PokemonController {
   @Get('/api/v1/pokemons/:id')
   async getPokemonById(@Param('id', ParseIntPipe) id: number) {
     return await this.pokemonService.getPokemonById(id);
+  }
+
+  @Get('/api/v1/search')
+  async searchPokemons(@Query('query') query: string, @Query('limit') limit?: number): Promise<Pokemon[]> {
+    return await this.pokemonService.searchPokemons(query, limit);
   }
 }
