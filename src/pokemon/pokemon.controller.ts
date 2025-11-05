@@ -4,7 +4,6 @@ import {
   Param,
   ParseIntPipe,
   Query,
-  ValidationPipe,
 } from '@nestjs/common';
 import { PokemonService } from '../pokemon/pokemon.service.js';
 import { Pokemon } from '../../generated/prisma/client.js';
@@ -15,7 +14,7 @@ export class PokemonController {
 
   @Get('/api/v1/pokemons')
   async getAllPokemons(
-    @Query('sort', ValidationPipe) sort?: 'name-asc' | 'name-desc' | 'id-asc' | 'id-desc',
+    @Query('sort') sort?: 'name-asc' | 'name-desc' | 'id-asc' | 'id-desc',
   ): Promise<Pokemon[]> {
     return await this.pokemonService.getAllPokemons(sort);
   }
@@ -31,7 +30,7 @@ export class PokemonController {
   }
 
   @Get('/api/v2/pokemons')
-  async getPokemonsPaginated(@Query('sort', ValidationPipe) sort?: 'name-asc' | 'name-desc' | 'id-asc' | 'id-desc',
+  async getPokemonsPaginated(@Query('sort') sort?: 'name-asc' | 'name-desc' | 'id-asc' | 'id-desc',
   @Query('limit') limit?: number, @Query('offset') offset?: number) {
     return await this.pokemonService.getPokemonsPaginated(sort, limit, offset);
   }
