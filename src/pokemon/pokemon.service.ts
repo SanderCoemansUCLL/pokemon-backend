@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Pokemon } from 'generated/prisma/client.js';
 import { PrismaService } from '../prisma.service.js';
 import { PokemonType } from '../types/index.js';
@@ -63,5 +63,59 @@ export class PokemonService {
       take,
       skip,
     });
+  }
+
+  async importPokemon(identifier: string): Promise<Pokemon> {
+    if (!identifier) {
+      throw new BadRequestException('Identifier is required to import a Pokémon.');
+    }
+
+    const apiPokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${identifier}`);
+    if (!apiPokemon.ok) {
+      throw new BadRequestException('Pokémon not found in external API.');
+    }
+
+    const pokemonData = await apiPokemon.json();
+
+    if (await this.pokemonExists(pokemonData.id)) {
+      throw new BadRequestException('Pokémon already exists in the database.');
+    }
+
+    await this.prisma.pokemonDetails.create({
+      data: {
+        id: pokemonData.id,
+        name: pokemonData.name,
+        sprites: pokemonData.sprites,
+        types: pokemonData.types,
+        height: pokemonData.height,
+        weight: pokemonData.weight,
+        moves: pokemonData.moves,
+        order: pokemonData.order,
+        species: pokemonData.species.name,
+        stats: pokemonData.stats,
+        abilities: pokemonData.abilities,
+        form: pokemonData.forms[0]?.name || pokemonData.name,
+      },
+    });
+
+    return await this.prisma.pokemon.create({
+      data: {
+        id: pokemonData.id,
+        name: pokemonData.name,
+        sprites: pokemonData.sprites,
+        types: pokemonData.types,
+      },
+    });
+  }
+
+  async pokemonExists(id: number): Promise<boolean> {
+    const pokemon = await this.prisma.pokemon.findUnique({
+      where: { id },
+    });
+
+    const pokemonDetails = await this.prisma.pokemonDetails.findUnique({
+      where: { id },
+    });
+    return !!pokemon && !!pokemonDetails;
   }
 }

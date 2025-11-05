@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Post,
   Query,
 } from '@nestjs/common';
 import { PokemonService } from '../pokemon/pokemon.service.js';
@@ -33,5 +34,10 @@ export class PokemonController {
   async getPokemonsPaginated(@Query('sort') sort?: 'name-asc' | 'name-desc' | 'id-asc' | 'id-desc',
   @Query('limit') limit?: number, @Query('offset') offset?: number) {
     return await this.pokemonService.getPokemonsPaginated(sort, limit, offset);
+  }
+
+  @Post('/api/v1/pokemons/import/:identifier')
+  async importPokemon(@Param('identifier') identifier: string) {
+    return await this.pokemonService.importPokemon(identifier);
   }
 }
