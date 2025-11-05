@@ -1,8 +1,6 @@
 import {
   Controller,
-  DefaultValuePipe,
   Get,
-  Optional,
   Param,
   ParseIntPipe,
   Query,
