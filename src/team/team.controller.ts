@@ -7,10 +7,13 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { TeamService } from '../team/team.service.js';
 import { Team, Prisma } from '../../generated/prisma/client.js';
+import { AuthGuard } from '../auth.guard.js';
 
+@UseGuards(AuthGuard)
 @Controller()
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
