@@ -40,4 +40,9 @@ export class PokemonController {
   async importPokemon(@Param('identifier') identifier: string) {
     return await this.pokemonService.importPokemon(identifier);
   }
+
+  @Get('/api/v1/pokemons/:identifier/download-image')
+  async downloadPokemonImage(@Param('identifier') identifier: string) {
+    return await this.pokemonService.downloadPokemonImage(identifier);
+  }
 }

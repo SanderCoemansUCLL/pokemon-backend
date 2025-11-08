@@ -2,6 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Pokemon } from 'generated/prisma/client.js';
 import { PrismaService } from '../prisma.service.js';
 import { PokemonType } from '../types/index.js';
+import * as fs from 'fs';
+import path from 'path';
+import axios from 'axios';
 
 @Injectable()
 export class PokemonService {
@@ -117,5 +120,40 @@ export class PokemonService {
       where: { id },
     });
     return !!pokemon && !!pokemonDetails;
+  }
+
+  async downloadPokemonImage(identifier: string): Promise<void> {
+    const apiPokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${identifier}`);
+    if (!apiPokemon.ok) {
+      throw new BadRequestException('Pokémon not found in external API.');
+    }
+
+    const pokemonData = await apiPokemon.json();
+    const imageUrl = pokemonData.sprites.front_default;
+
+    if (!imageUrl) {
+      throw new BadRequestException('No image available for this Pokémon.');
+    }
+
+    const directory = path.join(process.cwd(), 'downloaded-images');
+
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory);
+    }
+
+    const filepath = path.join(directory, `${identifier}.png`);
+
+    const response = await axios({
+    url: imageUrl,
+    method: 'GET',
+    responseType: 'stream',
+  })
+  return new Promise<void>((resolve, reject) => {
+    response.data
+      .pipe(fs.createWriteStream(filepath))
+      .on('error', reject)
+      .once('close', () => resolve())
+  })
+
   }
 }
