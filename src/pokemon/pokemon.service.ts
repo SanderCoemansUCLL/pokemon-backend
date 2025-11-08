@@ -141,7 +141,7 @@ export class PokemonService {
       fs.mkdirSync(directory);
     }
 
-    const filepath = path.join(directory, `${identifier}.png`);
+    const filepath = path.join(directory, `${pokemonData.name}.png`);
 
     const response = await axios({
     url: imageUrl,
